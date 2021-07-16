@@ -1,0 +1,71 @@
+How to transfer a single mailbox on Linux/Unix using imapsysnc
+
+Refer: https://imapsync.lamiral.info/
+Imapsync: is an IMAP sync tool. It syncs all folders from one mailbox 
+to another, both anywhere on the Internet or in your local network.
+
+Install imapsync from epel repository on both machines
+Install EPEL repo in CentOS 7.9
+yum -y install epel-release refer: https://www.tecmint.com/install-epel-repository-on-centos/
+yum install imapsync
+
+Install EPEL repo in CentOS 5.x
+Get the rpm binary from the url below;
+https://ftp-stud.hs-esslingen.de/pub/Mirrors/archive.fedoraproject.org/epel/5/x86_64/
+https://fedora-archive.ip-connect.vn.ua/epel/5/x86_64/epel-release-5-4.noarch.rpm
+
+Get imapsync for centos 5.x
+https://fedora-archive.ip-connect.vn.ua/epel/5/x86_64/imapsync-1.678-1.el5.noarch.rpm
+yum install imapsync-1.678-1.el5.noarch.rpm
+
+A basic example in a shell terminal is the following:
+
+#imapsync   \
+  --host1 mail.llc.co.ke \
+  --user1 alex@llc.co.ke \
+  --password1  "secret1" \
+  --host2 mail.llc.org \
+  --user2 alex@llc.org \
+  --password2  "secret2"
+
+
+#imapsync --host1 mail.llc.co.ke --user1 faith@llc.co.ke --password1 604*Hero
+ --host2 mail.llc.org --user2 faith@llc.org --password2 604*Hero
+
+migrate multiple accounts Using a shell script
+
+Write a file called file.txt (for example)
+containing hosts, users and passwords on both sides.
+The separator used is ";"
+
+The file.txt file contains for example:
+
+host001_1;user001_1;password001_1;host001_2;user001_2;password001_2;
+host002_1;user002_1;password002_1;host002_2;user002_2;password002_2;
+host003_1;user003_1;password003_1;host003_2;user003_2;password003_2;
+host004_1;user004_1;password004_1;host004_2;user004_2;password004_2;
+
+The first column (host001_1, host002_1 ...) will
+contain the same value, the value of --host1 parameter. Same
+thing for the third column (host001_2, host002_2).
+
+On Unix the shell script can be:
+
+#!/bin/sh
+{ while IFS=';' read  h1 u1 p1 h2 u2 p2 fake
+    do 
+        imapsync --host1 "$h1" --user1 "$u1" --password1 "$p1" \
+                 --host2 "$h2" --user2 "$u2" --password2 "$p2" "$@" 
+    done 
+} < file.txt
+
+You can add extra options inside this script, just after the variable "$@".
+You can also pass extra options via the parameters of this script 
+since they will go in "$@"
+
+Here is a complete Unix example ready to use: 
+http://imapsync.lamiral.info/examples/sync_loop_unix.sh
+
+
+
+
